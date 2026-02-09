@@ -6,17 +6,12 @@
     <title>System_Override.exe ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --primary: #ff4d6d; --bg: #fff0f3; --tech-green: #00ff41; }
+        :root { --primary: #ff4d6d; --bg: #fff0f3; --tech-green: #00ff41; --hacker-dark: #0d0208; }
         
         body { 
-            margin: 0; 
-            height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background-color: #0d0208; 
-            font-family: 'Courier New', Courier, monospace; 
-            overflow: hidden; 
+            margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; 
+            background-color: var(--hacker-dark); font-family: 'Courier New', Courier, monospace; overflow: hidden; 
+            transition: background-color 1s;
         }
 
         /* Hacker Loading Screen */
@@ -26,81 +21,52 @@
 
         /* Main Card */
         #card {
-            background: white;
-            padding: 25px;
-            border-radius: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            text-align: center;
-            z-index: 10;
-            max-width: 380px;
-            width: 85%;
-            overflow: hidden; 
-            display: none; 
-            flex-direction: column;
-            align-items: center;
+            background: white; padding: 25px; border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6); text-align: center;
+            z-index: 10; max-width: 380px; width: 85%; overflow: hidden; 
+            display: none; flex-direction: column; align-items: center;
             font-family: 'Comic Sans MS', cursive, sans-serif;
-        }
-
-        .img-container {
-            width: 100%;
-            height: 250px;
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 15px;
-            border: 2px solid var(--bg);
-            background: #fdfdfd;
             position: relative;
         }
 
-        /* Hacker Flicker Effect on Images */
-        .img-container img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover;
-            filter: contrast(1.1) brightness(1.1);
+        /* The "Hacker" Image Container */
+        .img-container {
+            width: 100%; height: 250px; border-radius: 20px; overflow: hidden;
+            margin-bottom: 15px; border: 2px solid #333; position: relative; background: #000;
         }
 
+        .img-container img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8) contrast(1.2); }
+
+        /* Scanline Overlay Effect */
         .img-container::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
-            pointer-events: none;
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%; pointer-events: none;
         }
 
-        h1 { color: var(--primary); font-size: 1.4rem; margin: 10px 0; }
+        h1 { color: var(--primary); font-size: 1.3rem; margin: 10px 0; }
         
         .buttons { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 15px; 
-            min-height: 120px; 
-            width: 100%; 
-            position: relative; 
+            display: flex; justify-content: center; align-items: center; 
+            gap: 15px; min-height: 140px; width: 100%; position: relative; 
         }
         
         button { 
-            padding: 12px 25px; 
-            font-size: 1.1rem; 
-            border: none; 
-            border-radius: 50px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            transition: transform 0.2s ease; 
+            padding: 12px 25px; font-size: 1.1rem; border: none; border-radius: 50px; 
+            cursor: pointer; font-weight: bold; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
 
         #yesBtn { background-color: var(--primary); color: white; z-index: 1000; position: relative; }
-        #noBtn { background-color: #808080; color: white; z-index: 999; }
+        #noBtn { background-color: #444; color: #888; z-index: 999; }
 
-        .heart-bg { 
-            position: absolute; 
-            top: -10%; 
-            color: rgba(255, 77, 109, 0.2); 
-            font-size: 20px; 
-            animation: fall linear infinite; 
-            z-index: 0; 
+        #status-console { 
+            font-family: 'Courier New', monospace; font-size: 0.75rem; 
+            color: var(--tech-green); background: #000; padding: 8px; 
+            border-radius: 10px; width: 90%; margin-top: 10px; min-height: 20px;
         }
+
+        .heart-bg { position: absolute; top: -10%; color: rgba(255, 77, 109, 0.3); font-size: 20px; animation: fall linear infinite; z-index: 0; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
     </style>
 </head>
@@ -111,35 +77,50 @@
     <div id="card">
         <div id="content">
             <div class="img-container">
-                <img id="displayImg" src="me.jpeg" alt="Requesting">
+                <img id="displayImg" src="me.jpeg" alt="Source">
             </div>
-            <h1>Cutie!! will you be my Valentine? ❤️</h1>
+            <h1 id="main-q">Zoozoo, will you be my Valentine? ❤️</h1>
             <div class="buttons">
-                <button id="yesBtn">Yes</button>
-                <button id="noBtn">No</button>
+                <button id="yesBtn">YES</button>
+                <button id="noBtn">NO</button>
             </div>
+            <div id="status-console">> System: Awaiting response...</div>
         </div>
 
         <div id="successMessage" style="display:none;">
             <div class="img-container">
                 <img src="us.jpeg" alt="Us">
             </div>
-            <h1 style="font-size: 2.2rem;">Done Deal! ❤️</h1>
-            <p style="color: #555;">heheheh thankss zoozoo❤️❤️❤️❤️ </p>
+            <h1 style="font-size: 2rem;">DECRYPTED: I LOVE YOU! ❤️</h1>
+            <p style="color: #444; font-weight: bold;">Locked in forever. No rollbacks. ❤️</p>
         </div>
     </div>
 
     <script>
         const loader = document.getElementById('loader');
         const card = document.getElementById('card');
-        
+        const statusConsole = document.getElementById('status-console');
+        const displayImg = document.getElementById('displayImg');
+
         const loadLines = [
             "> Initializing Love_Protocol.exe...",
-            "> Connection established.",
-            "> Analyzing compatibility: 100%",
-            "> System Status: Zoozoo identified.",
-            "> Overriding system defenses...",
-            "> Decrypting secret message..."
+            "> Scanning network for: 'Zoozoo'...",
+            "> Connection: SECURE [AES-256]",
+            "> Analyzing compatibility... 100%",
+            "> ERROR: Love levels exceeding system limits!",
+            "> Overriding defense firewalls...",
+            "> Decryption complete. Accessing Heart.jpg..."
+        ];
+
+        const logs = [
+            "Attempting to say No? Path blocked.",
+            "Memory found: You look cute today.",
+            "Analyzing... You are my favorite person.",
+            "Dobby says: 'Master must click Yes!'",
+            "Warning: Heart rate increasing...",
+            "System: There is no 'No' in my code.",
+            "Fact: I love you more than pizza.",
+            "HACKING: Disabling No button..."
         ];
 
         let lineIdx = 0;
@@ -154,7 +135,7 @@
             } else {
                 setTimeout(() => {
                     loader.style.display = 'none';
-                    document.body.style.backgroundColor = '#fff0f3';
+                    document.body.style.backgroundColor = 'var(--bg)';
                     card.style.display = 'flex';
                     startHearts();
                 }, 800);
@@ -162,24 +143,32 @@
         }
         showLines();
 
-        // Exact filenames (Ensure these are lowercase .jpeg in GitHub!)
         const reactionImages = ["her1.jpeg", "her2.jpeg", "me.jpeg"];
-        const phrases = ["No", "Areeeeee","Are yaar pls", "👉👈 aisa mat kar yaaar", "Error!", "please yaaar", "Try Yes!", "pretty please", "dobby ke khatir"];
+        const phrases = ["No", "Rethinking...", "Access Denied", "System Error", "Try Again", "Are you sure?", "Still No?", "Pleaaaase?"];
         let pIndex = 0;
         let ySize = 1;
 
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
-        const displayImg = document.getElementById('displayImg');
 
         function moveNoButton() {
+            if (pIndex >= 10) {
+                // CRAZY FEATURE: No button disappears entirely after 10 tries
+                noBtn.style.display = 'none';
+                statusConsole.innerText = "> FATAL ERROR: 'NO' OPTION DELETED.";
+                yesBtn.style.transform = "scale(2)";
+                yesBtn.innerText = "YES (Only Option Left)";
+                return;
+            }
+
             noBtn.innerText = phrases[pIndex % phrases.length];
             displayImg.src = reactionImages[pIndex % reactionImages.length];
+            statusConsole.innerText = "> " + logs[pIndex % logs.length];
             
-            ySize += 0.45;
+            ySize += 0.5;
             yesBtn.style.transform = `scale(${ySize})`;
             
-            const padding = 80;
+            const padding = 100;
             const maxX = window.innerWidth - noBtn.offsetWidth - padding;
             const maxY = window.innerHeight - noBtn.offsetHeight - padding;
             
@@ -199,10 +188,9 @@
         yesBtn.addEventListener('click', () => {
             document.getElementById('content').style.display = 'none';
             document.getElementById('successMessage').style.display = 'block';
+            document.body.style.backgroundColor = "#ffccd5";
             confetti({ 
-                particleCount: 300, 
-                spread: 120, 
-                origin: { y: 0.6 },
+                particleCount: 400, spread: 150, origin: { y: 0.6 },
                 colors: ['#ff4d6d', '#ffffff', '#00ff41']
             });
         });
