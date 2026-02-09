@@ -7,19 +7,29 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --primary: #ff4d6d; --bg: #fff0f3; --tech-green: #00ff41; }
-        body { margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #0d0208; font-family: 'Courier New', Courier, monospace; overflow: hidden; }
+        
+        body { 
+            margin: 0; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background-color: #0d0208; 
+            font-family: 'Courier New', Courier, monospace; 
+            overflow: hidden; 
+        }
 
         /* Hacker Loading Screen */
-        #loader { color: var(--tech-green); text-align: left; width: 80%; max-width: 400px; }
+        #loader { color: var(--tech-green); text-align: left; width: 80%; max-width: 400px; z-index: 20; }
         .line { margin-bottom: 5px; opacity: 0; animation: fadeIn 0.1s forwards; }
         @keyframes fadeIn { to { opacity: 1; } }
 
-        /* Main Card (Hidden initially) */
+        /* Main Card */
         #card {
             background: white;
             padding: 25px;
             border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             text-align: center;
             z-index: 10;
             max-width: 380px;
@@ -38,20 +48,52 @@
             overflow: hidden;
             margin-bottom: 15px;
             border: 2px solid var(--bg);
+            background: #fdfdfd;
         }
 
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
+        .img-container img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
 
         h1 { color: var(--primary); font-size: 1.5rem; margin: 10px 0; }
-        .buttons { display: flex; justify-content: center; align-items: center; gap: 15px; min-height: 120px; width: 100%; position: relative; }
         
-        button { padding: 12px 25px; font-size: 1.1rem; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; }
-        #yesBtn { background-color: var(--primary); color: white; z-index: 100; }
-        #noBtn { background-color: #808080; color: white; }
+        .buttons { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 15px; 
+            min-height: 120px; 
+            width: 100%; 
+            position: relative; 
+        }
+        
+        button { 
+            padding: 12px 25px; 
+            font-size: 1.1rem; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: transform 0.2s ease; 
+        }
 
-        /* Background Hearts (Visible after load) */
-        .heart-bg { position: absolute; top: -10%; color: rgba(255, 77, 109, 0.2); font-size: 20px; animation: fall linear infinite; z-index: 0; }
+        #yesBtn { background-color: var(--primary); color: white; z-index: 1000; position: relative; }
+        #noBtn { background-color: #808080; color: white; z-index: 999; }
+
+        /* Floating Hearts */
+        .heart-bg { 
+            position: absolute; 
+            top: -10%; 
+            color: rgba(255, 77, 109, 0.2); 
+            font-size: 20px; 
+            animation: fall linear infinite; 
+            z-index: 0; 
+        }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        #status { font-size: 0.7rem; color: #888; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -68,7 +110,7 @@
                 <button id="yesBtn">Yes</button>
                 <button id="noBtn">No</button>
             </div>
-            <p id="status" style="font-size: 0.7rem; color: #888;">System: Awaiting authorization...</p>
+            <p id="status">System: Awaiting authorization...</p>
         </div>
 
         <div id="successMessage" style="display:none;">
@@ -76,24 +118,26 @@
                 <img src="us.jpeg" alt="Us">
             </div>
             <h1 style="font-size: 2.2rem;">ACCESS GRANTED! ❤️</h1>
-            <p>I love you! 🔐</p>
+            <p style="color: #555;">I love you! 🔐</p>
         </div>
     </div>
 
     <script>
         const loader = document.getElementById('loader');
         const card = document.getElementById('card');
+        
+        // Customize the girlfriend name here
         const loadLines = [
             "> Initializing Love_Protocol.exe...",
             "> Searching for user: [Girlfriend Name]...",
             "> Connection established.",
             "> Analyzing compatibility...",
-            "> Error: 0% chance of being without you.",
+            "> Result: 100% (PERFECT MATCH)",
             "> Overriding system defenses...",
             "> Decrypting secret message..."
         ];
 
-        // 1. Loading Animation
+        // 1. Hacker Loading Animation
         let lineIdx = 0;
         function showLines() {
             if (lineIdx < loadLines.length) {
@@ -102,21 +146,21 @@
                 div.innerText = loadLines[lineIdx];
                 loader.appendChild(div);
                 lineIdx++;
-                setTimeout(showLines, 600);
+                setTimeout(showLines, 500);
             } else {
                 setTimeout(() => {
                     loader.style.display = 'none';
                     document.body.style.backgroundColor = '#fff0f3';
                     card.style.display = 'flex';
                     startHearts();
-                }, 1000);
+                }, 800);
             }
         }
         showLines();
 
         // 2. Interaction Logic
         const reactionImages = ["her1.jpeg", "her2.jpeg", "me.jpeg"];
-        const phrases = ["No", "Are you sure?", "But look at this!", "Error!", "Nice try.", "Just say Yes!"];
+        const phrases = ["No", "Are you sure?", "Really?", "Think again!", "Error!", "Nice try.", "Try Yes!"];
         let pIndex = 0;
         let ySize = 1;
 
@@ -124,26 +168,48 @@
         const yesBtn = document.getElementById('yesBtn');
         const displayImg = document.getElementById('displayImg');
 
-        noBtn.addEventListener('mouseover', () => {
+        function moveNoButton() {
             noBtn.innerText = phrases[pIndex % phrases.length];
             displayImg.src = reactionImages[pIndex % reactionImages.length];
-            ySize += 0.4;
+            
+            // Grow Yes Button
+            ySize += 0.35;
             yesBtn.style.transform = `scale(${ySize})`;
             
-            const x = Math.random() * (window.innerWidth - 100);
-            const y = Math.random() * (window.innerHeight - 50);
+            // Safe Teleport Math (keeps button on screen)
+            const padding = 60;
+            const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+            const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+            
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+            
             noBtn.style.position = 'fixed';
-            noBtn.style.left = x + 'px';
-            noBtn.style.top = y + 'px';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            
             pIndex++;
+        }
+
+        // Mouse and Touch support
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevents clicking while jumping
+            moveNoButton();
         });
 
         yesBtn.addEventListener('click', () => {
             document.getElementById('content').style.display = 'none';
             document.getElementById('successMessage').style.display = 'block';
-            confetti({ particleCount: 200, spread: 100 });
+            confetti({ 
+                particleCount: 250, 
+                spread: 100, 
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffffff', '#ff758f'] 
+            });
         });
 
+        // 3. Floating Hearts Logic
         function startHearts() {
             setInterval(() => {
                 const heart = document.createElement('div');
