@@ -14,7 +14,7 @@
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            background-color: #0d0208; 
+            background-color: #0d0208; /* Starting with hacker black */
             font-family: 'Courier New', Courier, monospace; 
             overflow: hidden; 
         }
@@ -34,7 +34,7 @@
             z-index: 10;
             max-width: 380px;
             width: 85%;
-            overflow: hidden;
+            overflow: hidden; 
             display: none; /* Shown after loading */
             flex-direction: column;
             align-items: center;
@@ -57,7 +57,7 @@
             object-fit: cover; 
         }
 
-        h1 { color: var(--primary); font-size: 1.5rem; margin: 10px 0; }
+        h1 { color: var(--primary); font-size: 1.4rem; margin: 10px 0; }
         
         .buttons { 
             display: flex; 
@@ -110,7 +110,7 @@
                 <button id="yesBtn">Yes</button>
                 <button id="noBtn">No</button>
             </div>
-            <p id="status">System: Awaiting authorization...</p>
+            <p id="status">System Status: Waiting for input...</p>
         </div>
 
         <div id="successMessage" style="display:none;">
@@ -126,18 +126,14 @@
         const loader = document.getElementById('loader');
         const card = document.getElementById('card');
         
-        // Customize the girlfriend name here
         const loadLines = [
             "> Initializing Love_Protocol.exe...",
-            "> Searching for user: [Girlfriend Name]...",
             "> Connection established.",
-            "> Analyzing compatibility...",
-            "> Result: 100% (PERFECT MATCH)",
+            "> Analyzing compatibility: 100%",
             "> Overriding system defenses...",
             "> Decrypting secret message..."
         ];
 
-        // 1. Hacker Loading Animation
         let lineIdx = 0;
         function showLines() {
             if (lineIdx < loadLines.length) {
@@ -158,9 +154,9 @@
         }
         showLines();
 
-        // 2. Interaction Logic
+        // Using your exact .jpeg filenames
         const reactionImages = ["her1.jpeg", "her2.jpeg", "me.jpeg"];
-        const phrases = ["No", "Are you sure?", "Really?", "Think again!", "Error!", "Nice try.", "Try Yes!"];
+        const phrases = ["No", "Are you sure?", "Think again!", "Error!", "Nice try.", "Try Yes!"];
         let pIndex = 0;
         let ySize = 1;
 
@@ -172,12 +168,11 @@
             noBtn.innerText = phrases[pIndex % phrases.length];
             displayImg.src = reactionImages[pIndex % reactionImages.length];
             
-            // Grow Yes Button
-            ySize += 0.35;
+            ySize += 0.4;
             yesBtn.style.transform = `scale(${ySize})`;
             
-            // Safe Teleport Math (keeps button on screen)
-            const padding = 60;
+            // Constrain button to the screen edges so it doesn't disappear
+            const padding = 80;
             const maxX = window.innerWidth - noBtn.offsetWidth - padding;
             const maxY = window.innerHeight - noBtn.offsetHeight - padding;
             
@@ -191,12 +186,8 @@
             pIndex++;
         }
 
-        // Mouse and Touch support
         noBtn.addEventListener('mouseover', moveNoButton);
-        noBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevents clicking while jumping
-            moveNoButton();
-        });
+        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNoButton(); });
 
         yesBtn.addEventListener('click', () => {
             document.getElementById('content').style.display = 'none';
@@ -204,12 +195,10 @@
             confetti({ 
                 particleCount: 250, 
                 spread: 100, 
-                origin: { y: 0.6 },
-                colors: ['#ff4d6d', '#ffffff', '#ff758f'] 
+                origin: { y: 0.6 }
             });
         });
 
-        // 3. Floating Hearts Logic
         function startHearts() {
             setInterval(() => {
                 const heart = document.createElement('div');
