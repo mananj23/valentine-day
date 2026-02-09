@@ -14,7 +14,7 @@
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            background-color: #0d0208; /* Starting with hacker black */
+            background-color: #0d0208; 
             font-family: 'Courier New', Courier, monospace; 
             overflow: hidden; 
         }
@@ -35,7 +35,7 @@
             max-width: 380px;
             width: 85%;
             overflow: hidden; 
-            display: none; /* Shown after loading */
+            display: none; 
             flex-direction: column;
             align-items: center;
             font-family: 'Comic Sans MS', cursive, sans-serif;
@@ -49,12 +49,23 @@
             margin-bottom: 15px;
             border: 2px solid var(--bg);
             background: #fdfdfd;
+            position: relative;
         }
 
+        /* Hacker Flicker Effect on Images */
         .img-container img { 
             width: 100%; 
             height: 100%; 
-            object-fit: cover; 
+            object-fit: cover;
+            filter: contrast(1.1) brightness(1.1);
+        }
+
+        .img-container::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
+            pointer-events: none;
         }
 
         h1 { color: var(--primary); font-size: 1.4rem; margin: 10px 0; }
@@ -82,7 +93,6 @@
         #yesBtn { background-color: var(--primary); color: white; z-index: 1000; position: relative; }
         #noBtn { background-color: #808080; color: white; z-index: 999; }
 
-        /* Floating Hearts */
         .heart-bg { 
             position: absolute; 
             top: -10%; 
@@ -92,8 +102,6 @@
             z-index: 0; 
         }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
-
-        #status { font-size: 0.7rem; color: #888; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -110,7 +118,6 @@
                 <button id="yesBtn">Yes</button>
                 <button id="noBtn">No</button>
             </div>
-            <p id="status"></p>
         </div>
 
         <div id="successMessage" style="display:none;">
@@ -130,10 +137,9 @@
             "> Initializing Love_Protocol.exe...",
             "> Connection established.",
             "> Analyzing compatibility: 100%",
+            "> System Status: Zoozoo identified.",
             "> Overriding system defenses...",
             "> Decrypting secret message..."
-            
-            
         ];
 
         let lineIdx = 0;
@@ -156,7 +162,7 @@
         }
         showLines();
 
-        // Using your exact .jpeg filenames
+        // Exact filenames (Ensure these are lowercase .jpeg in GitHub!)
         const reactionImages = ["her1.jpeg", "her2.jpeg", "me.jpeg"];
         const phrases = ["No", "Areeeeee","Are yaar pls", "👉👈 aisa mat kar yaaar", "Error!", "please yaaar", "Try Yes!", "pretty please", "dobby ke khatir"];
         let pIndex = 0;
@@ -170,10 +176,9 @@
             noBtn.innerText = phrases[pIndex % phrases.length];
             displayImg.src = reactionImages[pIndex % reactionImages.length];
             
-            ySize += 0.4;
+            ySize += 0.45;
             yesBtn.style.transform = `scale(${ySize})`;
             
-            // Constrain button to the screen edges so it doesn't disappear
             const padding = 80;
             const maxX = window.innerWidth - noBtn.offsetWidth - padding;
             const maxY = window.innerHeight - noBtn.offsetHeight - padding;
@@ -195,9 +200,10 @@
             document.getElementById('content').style.display = 'none';
             document.getElementById('successMessage').style.display = 'block';
             confetti({ 
-                particleCount: 250, 
-                spread: 100, 
-                origin: { y: 0.6 }
+                particleCount: 300, 
+                spread: 120, 
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffffff', '#00ff41']
             });
         });
 
