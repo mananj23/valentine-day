@@ -14,8 +14,30 @@
             transition: background-color 1s;
         }
 
+        /* Password Overlay */
+        #password-screen {
+            position: fixed; inset: 0; background: var(--hacker-dark); z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--tech-green); text-align: center; padding: 20px;
+        }
+        .pass-box {
+            border: 1px solid var(--tech-green); padding: 30px; border-radius: 15px;
+            background: rgba(0,0,0,0.9); box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+            max-width: 350px; width: 100%;
+        }
+        #passInput {
+            background: black; border: 1px solid var(--tech-green); color: var(--tech-green);
+            padding: 12px; width: 80%; outline: none; margin: 15px 0; text-align: center;
+            font-size: 1.2rem; border-radius: 5px;
+        }
+        .pass-btn {
+            background: var(--tech-green); color: black; border: none; padding: 10px 25px;
+            cursor: pointer; font-weight: bold; border-radius: 5px; transition: 0.3s;
+        }
+        .pass-btn:hover { background: #fff; box-shadow: 0 0 15px var(--tech-green); }
+
         /* Hacker Loading Screen */
-        #loader { color: var(--tech-green); text-align: left; width: 80%; max-width: 400px; z-index: 20; }
+        #loader { color: var(--tech-green); text-align: left; width: 80%; max-width: 400px; z-index: 20; display: none; }
         .line { margin-bottom: 5px; opacity: 0; animation: fadeIn 0.1s forwards; }
         @keyframes fadeIn { to { opacity: 1; } }
 
@@ -29,15 +51,11 @@
             position: relative;
         }
 
-        /* The "Hacker" Image Container */
         .img-container {
             width: 100%; height: 250px; border-radius: 20px; overflow: hidden;
             margin-bottom: 15px; border: 2px solid #333; position: relative; background: #000;
         }
-
         .img-container img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8) contrast(1.2); }
-
-        /* Scanline Overlay Effect */
         .img-container::after {
             content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
@@ -46,17 +64,8 @@
         }
 
         h1 { color: var(--primary); font-size: 1.3rem; margin: 10px 0; }
-        
-        .buttons { 
-            display: flex; justify-content: center; align-items: center; 
-            gap: 15px; min-height: 140px; width: 100%; position: relative; 
-        }
-        
-        button { 
-            padding: 12px 25px; font-size: 1.1rem; border: none; border-radius: 50px; 
-            cursor: pointer; font-weight: bold; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-
+        .buttons { display: flex; justify-content: center; align-items: center; gap: 15px; min-height: 140px; width: 100%; position: relative; }
+        button { padding: 12px 25px; font-size: 1.1rem; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         #yesBtn { background-color: var(--primary); color: white; z-index: 1000; position: relative; }
         #noBtn { background-color: #444; color: #888; z-index: 999; }
 
@@ -71,6 +80,17 @@
     </style>
 </head>
 <body>
+
+    <div id="password-screen">
+        <div class="pass-box">
+            <p>> AUTHENTICATION REQUIRED</p>
+            <p style="font-size: 0.8rem; color: #888;">Hint: The secret nickname</p>
+            <input type="password" id="passInput" placeholder="Enter Key..." autofocus>
+            <br>
+            <button class="pass-btn" onclick="checkPassword()">DECRYPT</button>
+            <p id="passError" style="color: #ff4d6d; font-size: 0.8rem; margin-top: 10px; display: none;">!! ACCESS DENIED !!</p>
+        </div>
+    </div>
 
     <div id="loader"></div>
 
@@ -101,6 +121,32 @@
         const card = document.getElementById('card');
         const statusConsole = document.getElementById('status-console');
         const displayImg = document.getElementById('displayImg');
+        const passScreen = document.getElementById('password-screen');
+        const passInput = document.getElementById('passInput');
+        const passError = document.getElementById('passError');
+
+        // PASSWORD LOGIC
+        function checkPassword() {
+            // EDIT YOUR PASSWORD HERE
+            const correctPass = "cutie"; 
+            
+            if (passInput.value === correctPass) {
+                passScreen.style.display = 'none';
+                loader.style.display = 'block';
+                showLines();
+            } else {
+                passError.style.display = 'block';
+                passInput.value = "";
+                // Shake effect
+                passInput.style.borderColor = 'red';
+                setTimeout(() => passInput.style.borderColor = '#00ff41', 500);
+            }
+        }
+
+        // Listen for "Enter" key
+        passInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPassword();
+        });
 
         const loadLines = [
             "> Initializing Love_Protocol.exe...",
@@ -141,7 +187,6 @@
                 }, 800);
             }
         }
-        showLines();
 
         const reactionImages = ["her1.jpeg", "her2.jpeg", "me.jpeg"];
         const phrases = ["No", "Rethinking...", "Access Denied", "System Error", "Try Again", "Are you sure?", "Still No?", "Pleaaaase?"];
@@ -153,7 +198,6 @@
 
         function moveNoButton() {
             if (pIndex >= 10) {
-                // CRAZY FEATURE: No button disappears entirely after 10 tries
                 noBtn.style.display = 'none';
                 statusConsole.innerText = "> FATAL ERROR: 'NO' OPTION DELETED.";
                 yesBtn.style.transform = "scale(2)";
@@ -162,10 +206,12 @@
             }
 
             noBtn.innerText = phrases[pIndex % phrases.length];
-            displayImg.src = reactionImages[pIndex % reactionImages.length];
+            // Only changes image if they exist in your folder
+            if(pIndex < reactionImages.length) displayImg.src = reactionImages[pIndex];
+            
             statusConsole.innerText = "> " + logs[pIndex % logs.length];
             
-            ySize += 0.5;
+            ySize += 0.3;
             yesBtn.style.transform = `scale(${ySize})`;
             
             const padding = 100;
